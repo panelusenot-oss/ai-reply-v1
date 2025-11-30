@@ -1,11 +1,8 @@
 {
   "name": "ai-reply-v1",
   "version": "1.0.0",
-  "type": "module",
   "dependencies": {
-    "@google/genai": "^0.1.0"
-  },
-  "engines": {
-    "node": "20.x"  <-- Recommended stable version
+    "@google/genai": "^0.1.0" // <-- MISSING COMMA!
+    "other-package": "^1.0.0" 
   }
 }
