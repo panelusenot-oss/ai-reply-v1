@@ -2,7 +2,7 @@
 import OpenAI from "openai";
 
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY, // Keep your key safe in Vercel
+  apiKey: process.env.OPENAI_API_KEY, // Set this in Vercel's Environment Variables
 });
 
 export default async function handler(req, res) {
@@ -21,15 +21,17 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "Missing ask parameter" });
     }
 
-    // Call OpenAI Responses API (GPT-5 Nano)
-    const response = await openai.responses.create({
-      model: "gpt-5-nano",
-      input: ask,
-      store: true
+    // --- CRITICAL CHANGE: Use the standard Chat Completions API ---
+    const response = await openai.chat.completions.create({
+      model: "gpt-3.5-turbo", // CHANGED: Use a valid model (e.g., gpt-3.5-turbo)
+      messages: [
+        { role: "user", content: ask }
+      ]
     });
 
     // Extract the AI output safely
-    const reply = response.output_text || "No reply from AI";
+    const reply = response.choices[0].message.content || "No reply from AI";
+    // --- CRITICAL CHANGE ENDS HERE ---
 
     return res.status(200).json({ reply });
   } catch (err) {
