@@ -1,9 +1,9 @@
 // api/ask.js
-import OpenAI from "openai";
+// 1. Import the correct Google SDK client
+import { GoogleGenAI } from "@google/genai";
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY, // Set this in Vercel's Environment Variables
-});
+// 2. Initialize the client. It automatically looks for the GEMINI_API_KEY environment variable.
+const ai = new GoogleGenAI({});
 
 export default async function handler(req, res) {
   try {
@@ -14,6 +14,7 @@ export default async function handler(req, res) {
     const { key, ask } = req.query;
 
     if (!key || key !== process.env.MY_API_KEY) {
+      // Good security practice: Check your custom key
       return res.status(401).json({ error: "Invalid API key" });
     }
 
@@ -21,17 +22,14 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "Missing ask parameter" });
     }
 
-    // --- CRITICAL CHANGE: Use the standard Chat Completions API ---
-    const response = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo", // CHANGED: Use a valid model (e.g., gpt-3.5-turbo)
-      messages: [
-        { role: "user", content: ask }
-      ]
+    // 3. Call the generateContent endpoint with the correct model and format
+    const response = await ai.models.generateContent({
+      model: "gemini-2.5-flash", // Use a valid, accessible Gemini model
+      contents: ask, // Simplest form for a text prompt
     });
 
-    // Extract the AI output safely
-    const reply = response.choices[0].message.content || "No reply from AI";
-    // --- CRITICAL CHANGE ENDS HERE ---
+    // 4. Extract the AI output safely
+    const reply = response.text || "No reply from AI";
 
     return res.status(200).json({ reply });
   } catch (err) {
