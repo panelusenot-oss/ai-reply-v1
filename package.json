@@ -1,8 +1,14 @@
 {
-  "name": "ai-reply-api",
+  "name": "your-openai-api",
   "version": "1.0.0",
+  "description": "API endpoint for OpenAI",
+  "main": "api/ask.js",
   "type": "module",
   "dependencies": {
-    "openai": "^5.0.0"
+    "openai": "^4.20.1"  <-- **ADD THIS LINE!**
+  },
+  "scripts": {
+    "start": "node api/ask.js"
+    // Other scripts you might have
   }
 }
